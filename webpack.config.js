@@ -29,7 +29,7 @@ module.exports = (env) => {
     },
 
     entry: {
-      styles: './less/main.less',
+      styles: ['./main.css'],
     },
 
     resolve: {
@@ -41,28 +41,27 @@ module.exports = (env) => {
     module: {
       rules: [
         {
-          test: /\.(less|css)$/,
+          test: /\.css$/,
           //sideEffects: true,
           use: [
             MiniCssExtractPlugin.loader,
             {
               loader: 'css-loader',
-              options: {importLoaders: 2},
+              options: {importLoaders: 1},
             },
             {
               loader: 'postcss-loader',
               options: {
-                plugins: [
-                  require('autoprefixer'),
-                  require('cssnano')({
-                    preset: 'default',
+                plugins: (loader) => [
+                  require("postcss-import")(),
+                  require("postcss-css-variables")({
+                    "preserve": false
                   }),
-                ],
-              },
-            },
-            {
-              loader: 'less-loader',
-            },
+                  require("autoprefixer")(),
+                  (env && env.mode === 'production') ? require("cssnano")() : null,
+                ].filter(p => !!p)
+              }
+            }
           ],
         },
 
