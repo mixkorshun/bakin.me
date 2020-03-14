@@ -24,8 +24,7 @@ module.exports = (env) => {
       path: outputPath,
       publicPath: env.publicPath || '/',
 
-      filename: 'assets/[name].[hash].js',
-      chunkFilename: 'assets/[name].[chunkhash].js',
+      filename: 'assets/[name].[contenthash].js',
     },
 
     entry: {
@@ -34,7 +33,7 @@ module.exports = (env) => {
 
     resolve: {
       alias: {
-        'public': path.resolve(__dirname, 'public'),
+        '~': path.resolve(__dirname, 'src'),
       },
     },
 
@@ -89,7 +88,7 @@ module.exports = (env) => {
 
       new FaviconsWebpackPlugin({
         // Your source logo
-        logo: path.resolve('public/favicon.png'),
+        logo: path.resolve(__dirname, 'src/assets/favicon.png'),
         prefix: 'assets/favicon.[hash]/',
         emitStats: false,
         statsFilename: 'iconstats-[hash].json',

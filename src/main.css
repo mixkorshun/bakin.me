@@ -40,10 +40,11 @@ h2, .h2 {
 
 .body {
   display: flex;
+  align-items: center;
 }
 
 .photo {
-  width: 192px;
+  width: 148px;
   margin-right: 24px;
 }
 
@@ -55,7 +56,6 @@ h2, .h2 {
 }
 
 .main {
-  font-size: 20px;
 }
 
 .header {
@@ -66,10 +66,6 @@ h2, .h2 {
   font-weight: var(--font-weight-normal);
   padding-left: 4px;
   margin-bottom: 12px;
-}
-
-.status {
-  padding-left: 4px;
 }
 
 .social-icon-list {
