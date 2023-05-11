@@ -2,22 +2,22 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
-const webpack = require('webpack');
+
+const NODE_ENV = process.env.NODE_ENV ?? "development";
+const IS_PRODUCTION = NODE_ENV === "production";
 
 const sourcePath = path.resolve(__dirname, 'src');
 
 module.exports = (env) => {
-  if (!env || (!env.outputPath && !env.devServer)) {
-    throw new Error(
-      'Please specify output path using --env.outputPath=... or use --env.devServer',
-    );
+  if (IS_PRODUCTION && !env?.outputPath) {
+    throw new Error('Please specify output path using --env.outputPath=...');
   }
 
   const outputPath = path.resolve(__dirname, env.outputPath || '.tmp');
 
   return {
     context: sourcePath,
-    mode: env && env.mode || 'development',
+    mode: NODE_ENV,
     stats: 'errors-only',
 
     output: {
@@ -27,9 +27,7 @@ module.exports = (env) => {
       filename: 'assets/[name].[contenthash].js',
     },
 
-    entry: {
-      styles: ['./main.css'],
-    },
+    entry: './main.css',
 
     resolve: {
       alias: {
@@ -41,26 +39,10 @@ module.exports = (env) => {
       rules: [
         {
           test: /\.css$/,
-          //sideEffects: true,
           use: [
             MiniCssExtractPlugin.loader,
-            {
-              loader: 'css-loader',
-              options: {importLoaders: 1},
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                plugins: (loader) => [
-                  require("postcss-import")(),
-                  require("postcss-css-variables")({
-                    "preserve": false
-                  }),
-                  require("autoprefixer")(),
-                  (env && env.mode === 'production') ? require("cssnano")() : null,
-                ].filter(p => !!p)
-              }
-            }
+            {loader: 'css-loader'},
+            {loader: 'postcss-loader'}
           ],
         },
 
@@ -77,13 +59,9 @@ module.exports = (env) => {
     plugins: [
       renderHtml('index.html'),
 
-      new webpack.DefinePlugin({
-        'process.env': {NODE_ENV: JSON.stringify(process.env.NODE_ENV)},
-      }),
       new MiniCssExtractPlugin({
         filename: 'assets/[name].[hash].css',
         chunkFilename: 'assets/[name].[hash].css',
-        allChunks: true,
       }),
 
       new FaviconsWebpackPlugin({
@@ -115,7 +93,7 @@ module.exports = (env) => {
     ],
 
     optimization: {
-      minimize: env && env.mode === 'production',
+      minimize: IS_PRODUCTION,
     },
 
     devServer: {
