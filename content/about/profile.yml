@@ -1,0 +1,20 @@
+profile:
+  name: Vlad
+  fullName: Vladislav Bakin
+  role: Product Engineer
+  location: London, UK
+
+  intro: |
+    Software engineering has always been my hobby, and I was lucky enough for it to become my job too.
+    My path started in PHP, but I escaped pretty early into Python, and these days I mostly use Typescript, Node.js and React.
+    Oh yes, almost forgot - I also like Rust.
+
+    When I'm not at my laptop:
+
+    - I'm very into surfing, and I spent a couple of years in Bali, Indonesia, living as a digital nomad
+    - I play volleyball as an outside hitter - give me a shout if you're into it too
+    - I own a little Triumph Speed 400, commute on it daily and take it touring at weekends
+
+  socials:
+    github: https://github.com/mixkorshun
+    linkedin: https://linkedin.com/in/vladislavbakin/

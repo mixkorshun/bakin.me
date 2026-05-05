@@ -1,0 +1,52 @@
+---
+import {getCollection, render} from 'astro:content';
+import Container from '../../components/Container.astro';
+import Layout from '../../layouts/Layout.astro';
+import {SITE_DESCRIPTION, SITE_TITLE} from '../../site-information.ts';
+import PostListItem from "../../components/PostListItem.astro";
+
+const entries = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const posts = await Promise.all(
+  entries.map(async (entry) => {
+    const {remarkPluginFrontmatter} = await render(entry);
+    return {
+      slug: entry.id,
+      title: entry.data.title,
+      description: entry.data.description,
+      pubDate: entry.data.pubDate,
+      minutesRead: remarkPluginFrontmatter.minutesRead ?? 1,
+    };
+  }),
+);
+---
+
+<Layout title={`Writing — ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+  <Container as="article" class="pt-8 md:pt-16">
+    <h1 class="mb-2 font-display text-4xl leading-wider font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+      Writing
+    </h1>
+
+    <p class="text-base text-neutral-500 dark:text-neutral-400">
+      Some of my thoughts on software engineering, products and startups
+    </p>
+
+    <div class="mt-8 flex flex-col">
+      {posts.length === 0 ? (
+        <div class="rounded-lg border border-dashed border-neutral-200 dark:border-neutral-800 px-6 py-10 text-center">
+          <p class="text-base text-neutral-400 dark:text-neutral-500">
+            Nothing here yet
+          </p>
+        </div>
+      ) : (
+        posts.map((post, idx) => (
+          <div class={(idx !== posts.length - 1) ? "pb-2 mb-2 border-b border-neutral-200 dark:border-neutral-800" : ""}>
+            <PostListItem post={post} />
+          </div>
+        ))
+      )}
+    </div>
+  </Container>
+</Layout>

@@ -1,0 +1,69 @@
+---
+import '../styles/global.css';
+import { Font } from 'astro:assets';
+import SiteHeader from '../components/SiteHeader.astro';
+import {SITE_TITLE} from "../site-information.ts";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const {title, description} = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <title>{SITE_TITLE}</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title={SITE_TITLE}
+    href={new URL('rss.xml', Astro.site)}
+  />
+  <meta name="generator" content={Astro.generator} />
+
+  <Font cssVariable="--font-geist" preload />
+  <Font cssVariable="--font-jetbrains-mono" preload />
+
+  <link rel="canonical" href={canonicalURL} />
+
+  <title>{title}</title>
+  <meta name="title" content={title} />
+  <meta name="description" content={description} />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={Astro.url} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={Astro.url} />
+  <meta property="twitter:title" content={title} />
+  <meta property="twitter:description" content={description} />
+
+  <script is:inline>
+    (() => {
+      const stored = sessionStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const dark = stored === 'dark' || (!stored && prefersDark);
+      document.documentElement.classList.toggle('dark', dark);
+    })();
+  </script>
+</head>
+<body class="font-sans">
+<div class="min-h-dvh py-6">
+  <SiteHeader/>
+
+  <main class="pt-6">
+    <slot/>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+---
+import {type CollectionEntry, getCollection, getEntry, render} from 'astro:content';
+import Container from '../../components/Container.astro';
+import Comments from '../../components/Comments.astro';
+import Layout from '../../layouts/Layout.astro';
+import {SITE_TITLE} from "../../site-information.ts";
+import FormattedDate from "../../components/FormattedDate.astro";
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog')).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
+
+  return posts.map((post) => {
+    return {
+      params: {slug: post.id},
+      props: {post},
+    };
+  });
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const profile = (await getEntry('about', 'profile'))?.data;
+
+if (!profile) {
+  throw new Error()
+}
+
+const {post} = Astro.props;
+const {Content} = await render(post);
+const {title, description, pubDate} = post.data;
+---
+
+<Layout title={`${title} - ${SITE_TITLE}`} description={description}>
+  <Container as="article" class="relative pt-8 md:pt-16">
+    <a
+        href="/blog"
+        class="absolute top-0 text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+    >
+      ← Writing
+    </a>
+
+    <h1 class="mb-2 font-display text-4xl leading-tight font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+      {post.data.title}
+    </h1>
+
+    <div class="text-sm text-neutral-500 dark:text-neutral-400">
+      <FormattedDate date={pubDate}/>
+
+      &nbsp;·&nbsp;
+
+      <span>
+        {profile.fullName}
+      </span>
+    </div>
+
+    <div class="post-body prose dark:prose-invert mt-10 max-w-none">
+      <Content/>
+    </div>
+
+    <Comments class="mt-12"/>
+  </Container>
+</Layout>

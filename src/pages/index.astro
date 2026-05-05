@@ -1,0 +1,55 @@
+---
+import {createMarkdownProcessor} from '@astrojs/markdown-remark';
+import {getEntry} from 'astro:content';
+import Container from '../components/Container.astro';
+import Layout from '../layouts/Layout.astro';
+import {SITE_DESCRIPTION, SITE_TITLE} from '../site-information.ts';
+
+const profile = (await getEntry('about', 'profile'))?.data;
+
+if (!profile) {
+  throw new Error('Missing about/profile')
+}
+
+const markdownProcessor = await createMarkdownProcessor();
+const introHtml = (await markdownProcessor.render(profile.intro)).code;
+
+const links = [
+  {label: 'LinkedIn', href: profile.socials.linkedin},
+  {label: 'GitHub', href: profile.socials.github},
+];
+---
+
+<Layout
+    title={SITE_TITLE}
+    description={SITE_DESCRIPTION}
+>
+  <Container as="article" class="pt-8 md:pt-16">
+    <h1 class="mb-2 font-display text-4xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+      Hey, I'm {profile.name} 👋
+    </h1>
+
+    <p class="font-display text-xl font-normal tracking-tight text-neutral-500 dark:text-neutral-400">
+      I'm a {profile.role.toLowerCase()} based in {profile.location.split(',')[0]}.
+    </p>
+
+    <div
+        class="prose prose-sm prose-neutral dark:prose-invert mt-6 max-w-none text-base leading-relaxed text-neutral-700 dark:text-neutral-300"
+        set:html={introHtml}
+    />
+
+    <div class="mt-8 flex flex-wrap gap-4 dark:border-neutral-800">
+      {
+        links.map((link) => (
+            <a
+                href={link.href}
+                class="inline-flex items-center gap-1 text-sm text-neutral-900 hover:text-neutral-600 dark:text-neutral-50 dark:hover:text-neutral-300"
+            >
+              {link.label}
+              <span class="text-neutral-400 dark:text-neutral-500">↗</span>
+            </a>
+        ))
+      }
+    </div>
+  </Container>
+</Layout>

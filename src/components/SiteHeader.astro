@@ -1,0 +1,24 @@
+---
+import NavLink from './NavLink.astro';
+import Container from "./Container.astro";
+import DarkModeToggle from "./DarkModeToggle.astro";
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header>
+  <Container>
+    <div class="w-full pb-6 border-b md:border-b-0 border-neutral-200 dark:border-neutral-800 flex gap-4 items-center justify-between md:justify-end">
+      <nav class="flex gap-4 md:border-r md:pr-4 border-neutral-200 dark:border-neutral-800">
+        <NavLink href="/" active={pathname === "/"}>
+          About me
+        </NavLink>
+        <NavLink href="/blog" active={pathname.startsWith("/blog")}>
+          Blog
+        </NavLink>
+      </nav>
+
+      <DarkModeToggle/>
+    </div>
+  </Container>
+</header>
